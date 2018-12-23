@@ -32,6 +32,6 @@ setup(
     author='Christian Kauten',
     author_email='kautencreations@gmail.com',
     license='MIT',
-    packages=find_packages(),
+    packages=find_packages(exclude=('tests',)),
     install_requires=['Keras>=2.2.2'],
 )
