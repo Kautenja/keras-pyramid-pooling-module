@@ -160,15 +160,24 @@ class PyramidPoolingModule(Layer):
             the output shape as a function of input shape
 
         """
+        # setup the channel axis based on the channel configuration
+        if self.data_format == 'channels_last':
+            channel_axis = -1
+        if self.data_format == 'channels_first':
+            channel_axis = 1
         # calculate the number of output filters used by each pyramid level
-        level_filters = (input_shape[-1] // len(self.bin_sizes))
+        level_filters = (input_shape[channel_axis] // len(self.bin_sizes))
         # calculate the number of filters produced by the pyramid
         pyramid_filters = len(self.bin_sizes) * level_filters
         # concatenate input filters with pyramid filters to determine the
         # number of output filters produced by the module
-        output_filters = input_shape[-1] + pyramid_filters
-        # use the number of output filters to determine the output shape
-        output_shape = input_shape[:-1] + (output_filters, )
+        output_filters = input_shape[channel_axis] + pyramid_filters
+
+        # compile the pieces of the shape and return it
+        left = input_shape[:channel_axis]
+        middle = (output_filters, )
+        right = input_shape[len(input_shape) - 1 - channel_axis:]
+        output_shape = left + middle + right
 
         return output_shape
 
@@ -184,7 +193,12 @@ class PyramidPoolingModule(Layer):
 
         """
         # the shape to up-sample pooled tensors to
-        output_shape = K.shape(input_)[1:-1]
+        if self.data_format == 'channels_last':
+            channel_axis = -1
+            output_shape = K.int_shape(input_)[1:-1]
+        if self.data_format == 'channels_first':
+            channel_axis = 1
+            output_shape = K.int_shape(input_)[2:]
         # create a list of output tensors to concatenate together
         output_tensors = [input_]
         # iterate over the bin sizes in the pooling module
@@ -196,6 +210,7 @@ class PyramidPoolingModule(Layer):
                 strides=(bin_size, bin_size),
                 padding=self.pool_padding,
                 pool_mode=self.pool_mode,
+                data_format=self.data_format,
             )
             # pass the pooled valued through a 1 x 1 convolution
             x = K.conv2d(x, self.kernels[level],
@@ -211,12 +226,21 @@ class PyramidPoolingModule(Layer):
             # apply the activation function if there is one
             if self.activation is not None:
                 x = self.activation(x)
+            # if data format is channels first, have to permute before resizing
+            # because resize expects channels last
+            if self.data_format == 'channels_first':
+                x = K.permute_dimensions(x, [0, 2, 3, 1])
             # up-sample the outputs back to the input shape
             x = K.tensorflow_backend.tf.image.resize_bilinear(x, output_shape)
+            # if data format is channels first, have to permute after resizing
+            # because resize output channels last
+            if self.data_format == 'channels_first':
+                x = K.permute_dimensions(x, [0, 3, 1, 2])
             # concatenate the output tensor with the stack of output tensors
             output_tensors += [x]
 
-        return K.concatenate(output_tensors, axis=-1)
+        # concatenate the output tensors before returning
+        return K.concatenate(output_tensors, axis=channel_axis)
 
     def get_config(self):
         """Return the configuration for building the layer."""
