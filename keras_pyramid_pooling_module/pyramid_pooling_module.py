@@ -29,7 +29,7 @@ class PyramidPoolingModule(Layer):
     """
 
     def __init__(self,
-        bin_sizes: list=[1, 2, 3, 6],
+        bin_sizes=[1, 2, 3, 6],
         pool_mode='avg',
         pool_padding='valid',
         conv_padding='valid',
