@@ -4,7 +4,7 @@ from setuptools import setup, find_packages
 
 # read the README as a string
 with open('README.md') as readme:
-    return README = readme.read()
+    README = readme.read()
 
 
 # start the setup procedure
