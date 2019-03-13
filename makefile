@@ -1,4 +1,8 @@
 
+# run the test script
+test:
+	python3 -m unittest discover .
+
 # clean the build directory
 clean:
 	rm -rf build/ dist/ .eggs/ *.egg-info/ || true
