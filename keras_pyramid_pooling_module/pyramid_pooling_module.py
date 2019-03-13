@@ -206,7 +206,8 @@ class PyramidPoolingModule(Layer):
             # pass the inputs through the pooling layer with the given bin
             # size, i.e., a square kernel with side matching the bin size and
             # a matching stride
-            x = K.pool2d(input_, (bin_size, bin_size),
+            x = K.pool2d(input_,
+                tuple(dim // bin_size for dim in output_shape),
                 strides=(bin_size, bin_size),
                 padding=self.pool_padding,
                 pool_mode=self.pool_mode,
