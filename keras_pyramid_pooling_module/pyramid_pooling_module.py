@@ -29,6 +29,7 @@ class PyramidPoolingModule(Layer):
     """
 
     def __init__(self,
+        num_filters=512,
         bin_sizes=[1, 2, 3, 6],
         pool_mode='avg',
         pool_padding='valid',
@@ -49,6 +50,7 @@ class PyramidPoolingModule(Layer):
         Initialize a new Pyramid Pooling Module.
 
         Args:
+            num_filters: the number of filters per convolutional unit
             bin_sizes: sizes for pooling bins
             pool_mode: pooling mode to use
             pool_padding: One of `"valid"` or `"same"` (case-insensitive).
@@ -71,6 +73,7 @@ class PyramidPoolingModule(Layer):
         """
         # setup instance variables
         self.input_spec = InputSpec(ndim=4)
+        self.num_filters = num_filters
         self.bin_sizes = bin_sizes
         self.pool_mode = pool_mode
         self.pool_padding = conv_utils.normalize_padding(pool_padding)
@@ -116,8 +119,8 @@ class PyramidPoolingModule(Layer):
 
         # get the input channels from the input shape
         input_dim = input_shape[channel_axis]
-        # create the shape for the N 1 x 1 kernels
-        kernel_shape = (1, 1, input_dim, 1)
+        # create the shape for the 1 x 1 convolution kernels
+        kernel_shape = (1, 1, input_dim, self.num_filters)
 
         # initialize the kernels and biases as empty lists
         self.kernels = len(self.bin_sizes) * [None]
@@ -135,7 +138,7 @@ class PyramidPoolingModule(Layer):
             # if using bias, create the bias weights for this level
             if self.use_bias:
                 self.biases[level] = self.add_weight(
-                    shape=(1, ),
+                    shape=(self.num_filters, ),
                     initializer=self.bias_initializer,
                     name='bias_{}'.format(bin_size),
                     regularizer=self.bias_regularizer,
@@ -164,7 +167,8 @@ class PyramidPoolingModule(Layer):
             channel_axis = 1
         # concatenate input filters with pyramid filters to determine the
         # number of output filters produced by the module
-        output_filters = input_shape[channel_axis] + len(self.bin_sizes)
+        output_filters = input_shape[channel_axis]
+        output_filters += len(self.bin_sizes) * self.num_filters
 
         # compile the pieces of the shape and return it
         left = input_shape[:channel_axis]
