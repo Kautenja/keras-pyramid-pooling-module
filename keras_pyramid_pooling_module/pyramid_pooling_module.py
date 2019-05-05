@@ -116,11 +116,8 @@ class PyramidPoolingModule(Layer):
 
         # get the input channels from the input shape
         input_dim = input_shape[channel_axis]
-        # get the number of channels for the convolutional kernel as 1 / N
-        # of the input dimension (where N is the level size of the pyramid)
-        output_dim = input_dim // len(self.bin_sizes)
         # create the shape for the N 1 x 1 kernels
-        kernel_shape = (1, 1, input_dim, output_dim)
+        kernel_shape = (1, 1, input_dim, 1)
 
         # initialize the kernels and biases as empty lists
         self.kernels = len(self.bin_sizes) * [None]
@@ -138,7 +135,7 @@ class PyramidPoolingModule(Layer):
             # if using bias, create the bias weights for this level
             if self.use_bias:
                 self.biases[level] = self.add_weight(
-                    shape=(output_dim, ),
+                    shape=(1, ),
                     initializer=self.bias_initializer,
                     name='bias_{}'.format(bin_size),
                     regularizer=self.bias_regularizer,
@@ -165,13 +162,9 @@ class PyramidPoolingModule(Layer):
             channel_axis = -1
         if self.data_format == 'channels_first':
             channel_axis = 1
-        # calculate the number of output filters used by each pyramid level
-        level_filters = (input_shape[channel_axis] // len(self.bin_sizes))
-        # calculate the number of filters produced by the pyramid
-        pyramid_filters = len(self.bin_sizes) * level_filters
         # concatenate input filters with pyramid filters to determine the
         # number of output filters produced by the module
-        output_filters = input_shape[channel_axis] + pyramid_filters
+        output_filters = input_shape[channel_axis] + len(self.bin_sizes)
 
         # compile the pieces of the shape and return it
         left = input_shape[:channel_axis]
