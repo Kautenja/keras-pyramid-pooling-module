@@ -243,6 +243,7 @@ class PyramidPoolingModule(Layer):
         """Return the configuration for building the layer."""
         # generate a dictionary of configuration items for this layer
         config = dict(
+            num_filters=self.num_filters,
             bin_sizes=self.bin_sizes,
             pool_mode=self.pool_mode,
             pool_padding=self.pool_padding,
