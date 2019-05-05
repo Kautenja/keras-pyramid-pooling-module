@@ -36,7 +36,7 @@ class PyramidPoolingModule(Layer):
         conv_padding='valid',
         data_format=None,
         activation=None,
-        use_bias=True,
+        use_bias=False,
         kernel_initializer='glorot_uniform',
         bias_initializer='zeros',
         kernel_regularizer=None,
