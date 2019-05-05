@@ -44,8 +44,9 @@ x = PyramidPoolingModule()(input_)
 model = Model(inputs=input_, outputs=x)
 ```
 
-# References
+see [example.ipynb](example.ipynb) for a rough example of the layer in use on
+a simple image input.
 
-[_[1] H. Zhao, J. Shi, X. Qi, X. Wang, and J. Jia. Pyramid scene parsing network. CVPR, 2017._][ref1]
+## References
 
-[ref1]: https://hszhao.github.io/projects/pspnet/
+[_[1] H. Zhao, J. Shi, X. Qi, X. Wang, and J. Jia. Pyramid scene parsing network. CVPR, 2017._](https://hszhao.github.io/projects/pspnet/)
