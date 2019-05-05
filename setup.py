@@ -17,7 +17,7 @@ setup(
     keywords=' '.join(['Keras', 'Pyramid-Pooling-Module', 'Layer']),
     classifiers=[
         'License :: Free For Educational Use',
-        'Development Status :: 4 - Beta',
+        'Development Status :: 5 - Production/Stable',
         'Intended Audience :: Developers',
         'Intended Audience :: Science/Research',
         'Operating System :: MacOS :: MacOS X',
