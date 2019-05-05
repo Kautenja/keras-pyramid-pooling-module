@@ -17,7 +17,7 @@ class ShouldCreatePyramidPoolingModuleWithCorrectSize(TestCase):
     def test(self):
         input_ = Input((224, 224, 12))
         x = PyramidPoolingModule()(input_)
-        self.assertEqual((224, 224, 16), K.int_shape(x)[1:])
+        self.assertEqual((224, 224, 12 + 4 * 512), K.int_shape(x)[1:])
 
 
 class ShouldPredict(TestCase):
@@ -26,7 +26,7 @@ class ShouldPredict(TestCase):
         x = PyramidPoolingModule()(input_)
         model = Model(inputs=input_, outputs=x)
         y = model.predict(np.random.random((224, 224, 12))[None, ...])
-        self.assertEqual((224, 224, 16), y[0].shape)
+        self.assertEqual((224, 224, 12 + 4 * 512), y[0].shape)
 
 
 class ShouldFit(TestCase):
@@ -45,7 +45,7 @@ class ShouldCreatePyramidPoolingModuleWithCorrectSizeChannelsFirst(TestCase):
     def test(self):
         input_ = Input((12, 224, 224))
         x = PyramidPoolingModule(data_format='channels_first')(input_)
-        self.assertEqual((16, 224, 224), K.int_shape(x)[1:])
+        self.assertEqual((12 + 4 * 512, 224, 224), K.int_shape(x)[1:])
 
 
 class ShouldPredictChannelsFirst(TestCase):
@@ -54,7 +54,7 @@ class ShouldPredictChannelsFirst(TestCase):
         x = PyramidPoolingModule(data_format='channels_first')(input_)
         model = Model(inputs=input_, outputs=x)
         y = model.predict(np.random.random((12, 224, 224))[None, ...])
-        self.assertEqual((16, 224, 224), y[0].shape)
+        self.assertEqual((12 + 4 * 512, 224, 224), y[0].shape)
 
 
 class ShouldFitChannelsFirst(TestCase):
