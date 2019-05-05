@@ -201,7 +201,6 @@ class PyramidPoolingModule(Layer):
             # a matching stride
             x = K.pool2d(input_,
                 tuple(dim // bin_size for dim in output_shape),
-                strides=(bin_size, bin_size),
                 padding=self.pool_padding,
                 pool_mode=self.pool_mode,
                 data_format=self.data_format,
