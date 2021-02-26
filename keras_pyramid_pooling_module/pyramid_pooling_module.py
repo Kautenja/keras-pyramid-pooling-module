@@ -31,7 +31,7 @@ class PyramidPoolingModule(Layer):
 
     def __init__(self,
         num_filters=1,
-        kernel_size=(3, 3),
+        kernel_size=(1, 1),
         bin_sizes=[1, 2, 3, 6],
         pool_mode='avg',
         padding='valid',
