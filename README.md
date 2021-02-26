@@ -17,6 +17,8 @@
 A [Keras](https://keras.io) implementation of the Pyramid Pooling Module
 discussed in [_Pyramid scene parsing network [1]_](#references).
 
+![Pyramid Pooling Layer](layer.png)
+
 ## Installation
 
 The preferred installation of `keras-pyramid-pooling-module` is from `pip`:
