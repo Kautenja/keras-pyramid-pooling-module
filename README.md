@@ -44,8 +44,11 @@ x = PyramidPoolingModule()(input_)
 model = Model(inputs=input_, outputs=x)
 ```
 
-see [example.ipynb](example.ipynb) for a rough example of the layer in use on
-a simple image input.
+See [PyramidPoolingModule.ipynb](PyramidPoolingModule.ipynb) for a rough example
+of the layer outputs for a simple RGB image.
+
+See [CIFAR10Classifier.ipynb](CIFAR10Classifier.ipynb) for an example of using
+the layer in a model to classify images.
 
 ## References
 
