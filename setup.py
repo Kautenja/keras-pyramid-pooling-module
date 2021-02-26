@@ -10,7 +10,7 @@ with open('README.md') as readme:
 # start the setup procedure
 setup(
     name='keras_pyramid_pooling_module',
-    version='1.1.7',
+    version='1.1.8',
     description='The Pyramid Pooling Module for Keras.',
     long_description=README,
     long_description_content_type='text/markdown',
