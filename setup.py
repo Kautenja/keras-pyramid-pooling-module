@@ -10,7 +10,7 @@ with open('README.md') as readme:
 # start the setup procedure
 setup(
     name='keras_pyramid_pooling_module',
-    version='1.1.5',
+    version='1.1.6',
     description='The Pyramid Pooling Module for Keras.',
     long_description=README,
     long_description_content_type='text/markdown',
@@ -22,9 +22,10 @@ setup(
         'Intended Audience :: Science/Research',
         'Operating System :: MacOS :: MacOS X',
         'Operating System :: POSIX :: Linux',
-        'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
+        'Programming Language :: Python :: 3.7',
+        'Programming Language :: Python :: 3.8',
         'Topic :: Scientific/Engineering :: Artificial Intelligence',
         'Topic :: Software Development :: Libraries :: Python Modules',
     ],
@@ -33,5 +34,5 @@ setup(
     author_email='kautencreations@gmail.com',
     license='MIT',
     packages=find_packages(exclude=['tests', '*.tests', '*.tests.*']),
-    install_requires=['Keras>=2.2.2'],
+    install_requires=['Keras>=2.4.3', 'tensorflow>=2.4.1'],
 )

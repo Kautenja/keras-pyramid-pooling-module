@@ -7,6 +7,7 @@ Reference:
     URL: https://arxiv.org/pdf/1612.01105.pdf
 
 """
+import tensorflow as tf
 from keras.engine.topology import Layer
 from keras.engine.base_layer import InputSpec
 from keras import activations
@@ -29,12 +30,11 @@ class PyramidPoolingModule(Layer):
     """
 
     def __init__(self,
-        num_filters=512,
+        num_filters=1,
         bin_sizes=[1, 2, 3, 6],
         pool_mode='avg',
         pool_padding='valid',
         conv_padding='valid',
-        data_format=None,
         activation=None,
         use_bias=False,
         kernel_initializer='glorot_uniform',
@@ -55,7 +55,6 @@ class PyramidPoolingModule(Layer):
             pool_mode: pooling mode to use
             pool_padding: One of `"valid"` or `"same"` (case-insensitive).
             conv_padding: One of `"valid"` or `"same"` (case-insensitive).
-            data_format: one of "channels_last" or "channels_first"
             activation: Activation function to use
             use_bias: whether layer uses a bias vector
             kernel_initializer: Initializer for kernel weights
@@ -78,7 +77,7 @@ class PyramidPoolingModule(Layer):
         self.pool_mode = pool_mode
         self.pool_padding = conv_utils.normalize_padding(pool_padding)
         self.conv_padding = conv_utils.normalize_padding(conv_padding)
-        self.data_format = K.normalize_data_format(data_format)
+        self.data_format = 'channels_last'
         self.activation = activations.get(activation)
         self.use_bias = use_bias
         self.kernel_initializer = initializers.get(kernel_initializer)
@@ -228,7 +227,7 @@ class PyramidPoolingModule(Layer):
             if self.data_format == 'channels_first':
                 x = K.permute_dimensions(x, [0, 2, 3, 1])
             # up-sample the outputs back to the input shape
-            x = K.tensorflow_backend.tf.image.resize_bilinear(x, output_shape)
+            x = tf.compat.v1.image.resize_bilinear(x, output_shape)
             # if data format is channels first, have to permute after resizing
             # because resize output channels last
             if self.data_format == 'channels_first':
