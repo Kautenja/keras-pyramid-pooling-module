@@ -17,7 +17,7 @@
 A [Keras](https://keras.io) implementation of the Pyramid Pooling Module
 discussed in [_Pyramid scene parsing network [1]_](#references).
 
-![Pyramid Pooling Layer](layer.png)
+![layer](https://user-images.githubusercontent.com/2184469/109330138-f9ca3f80-7820-11eb-9fbb-4a3b89a88bea.png)
 
 ## Installation
 
