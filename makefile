@@ -1,7 +1,5 @@
-
-# run the test script
-test:
-	python3 -m unittest discover .
+# build everything
+all: deployment
 
 # clean the build directory
 clean:
