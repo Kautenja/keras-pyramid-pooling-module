@@ -31,12 +31,12 @@ class PyramidPoolingModule(Layer):
 
     def __init__(self,
         num_filters=1,
+        kernel_size=(3, 3),
         bin_sizes=[1, 2, 3, 6],
         pool_mode='avg',
-        pool_padding='valid',
-        conv_padding='valid',
+        padding='valid',
         activation=None,
-        use_bias=False,
+        use_bias=True,
         kernel_initializer='glorot_uniform',
         bias_initializer='zeros',
         kernel_regularizer=None,
@@ -53,8 +53,7 @@ class PyramidPoolingModule(Layer):
             num_filters: the number of filters per convolutional unit
             bin_sizes: sizes for pooling bins
             pool_mode: pooling mode to use
-            pool_padding: One of `"valid"` or `"same"` (case-insensitive).
-            conv_padding: One of `"valid"` or `"same"` (case-insensitive).
+            padding: One of `"valid"` or `"same"` (case-insensitive).
             activation: Activation function to use
             use_bias: whether layer uses a bias vector
             kernel_initializer: Initializer for kernel weights
@@ -70,13 +69,15 @@ class PyramidPoolingModule(Layer):
             None
 
         """
+        if padding != 'same' and any(x > 1 for x in kernel_size):
+            raise ValueError("padding should be 'same' if the kernel size is larger than (1, 1)")
         # setup instance variables
         self.input_spec = InputSpec(ndim=4)
         self.num_filters = num_filters
+        self.kernel_size = kernel_size
         self.bin_sizes = bin_sizes
         self.pool_mode = pool_mode
-        self.pool_padding = conv_utils.normalize_padding(pool_padding)
-        self.conv_padding = conv_utils.normalize_padding(conv_padding)
+        self.padding = conv_utils.normalize_padding(padding)
         self.data_format = 'channels_last'
         self.activation = activations.get(activation)
         self.use_bias = use_bias
@@ -119,7 +120,7 @@ class PyramidPoolingModule(Layer):
         # get the input channels from the input shape
         input_dim = input_shape[channel_axis]
         # create the shape for the 1 x 1 convolution kernels
-        kernel_shape = (1, 1, input_dim, self.num_filters)
+        kernel_shape = (*self.kernel_size, input_dim, self.num_filters)
 
         # initialize the kernels and biases as empty lists
         self.kernels = len(self.bin_sizes) * [None]
@@ -204,14 +205,14 @@ class PyramidPoolingModule(Layer):
             # a matching stride
             x = K.pool2d(input_,
                 tuple(dim // bin_size for dim in output_shape),
-                padding=self.pool_padding,
+                padding=self.padding,
                 pool_mode=self.pool_mode,
                 data_format=self.data_format,
             )
             # pass the pooled valued through a 1 x 1 convolution
             x = K.conv2d(x, self.kernels[level],
                 strides=(1, 1),
-                padding=self.conv_padding,
+                padding=self.padding,
                 data_format=self.data_format,
             )
             # if use bias, apply the bias to the convolved outputs
@@ -245,8 +246,7 @@ class PyramidPoolingModule(Layer):
             num_filters=self.num_filters,
             bin_sizes=self.bin_sizes,
             pool_mode=self.pool_mode,
-            pool_padding=self.pool_padding,
-            conv_padding=self.conv_padding,
+            padding=self.padding,
             data_format=self.data_format,
             activation=activations.serialize(self.activation),
             use_bias=self.use_bias,
