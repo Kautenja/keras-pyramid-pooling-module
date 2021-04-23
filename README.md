@@ -14,6 +14,8 @@
 [python-version]: https://img.shields.io/pypi/pyversions/keras-pyramid-pooling-module.svg
 [python-home]: https://python.org
 
+**Deprecated:** Please use [tfa.layers.SpatialPyramidPooling2D](https://www.tensorflow.org/addons/api_docs/python/tfa/layers/SpatialPyramidPooling2D) instead.
+
 A [Keras](https://keras.io) implementation of the Pyramid Pooling Module
 discussed in [_Pyramid scene parsing network [1]_](#references).
 
